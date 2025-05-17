@@ -1,10 +1,13 @@
 import { format } from 'date-fns';
 import { Note, Category } from '../types';
+import { Star } from 'lucide-react';
+import { updateNote } from '../utils/storage';
+import { useNoteFilter } from '../context/NoteFilterContext';
 
 interface NoteCardProps {
   note: Note;
   categories: Category[];
-  onClick: (id: string) => void;
+  onClick?: (id: string) => void;
 }
 
 export default function NoteCard({ note, categories, onClick }: NoteCardProps) {
@@ -15,10 +18,12 @@ export default function NoteCard({ note, categories, onClick }: NoteCardProps) {
   
   const formattedDate = format(new Date(note.updatedAt), 'MMM d, yyyy');
 
+  const { refreshNotes } = useNoteFilter();
+
   return (
     <div 
       className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer p-4"
-      onClick={() => onClick(note.id)}
+      onClick={() => onClick && onClick(note.id)}
     >
       <div className="flex justify-between items-start mb-2">
         <h3 className="text-lg font-medium text-gray-900 dark:text-white line-clamp-1">{note.title}</h3>
@@ -44,6 +49,22 @@ export default function NoteCard({ note, categories, onClick }: NoteCardProps) {
           {formattedDate}
         </div>
         
+        <button 
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            console.log('Toggle favorite for note:', note.id);
+            
+            updateNote(note.id, { isFavorite: !note.isFavorite });
+            
+            refreshNotes();
+          }}
+          className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          aria-label={note.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          <Star size={16} fill={note.isFavorite ? 'currentColor' : 'none'} className={note.isFavorite ? 'text-yellow-500' : 'text-gray-400'} />
+        </button>
+
         {note.tags.length > 0 && (
           <div className="flex gap-1">
             {note.tags.slice(0, 2).map((tag, index) => (

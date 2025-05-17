@@ -47,7 +47,9 @@ export const createNote = (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): 
     ...note,
     id: uuidv4(),
     createdAt: now,
-    updatedAt: now
+    updatedAt: now,
+    isTrashed: false,
+    isPublic: note.isPublic ?? false
   };
   
   notes.push(newNote);
@@ -75,13 +77,18 @@ export const updateNote = (id: string, updatedNote: Partial<Omit<Note, 'id' | 'c
   return undefined;
 };
 
-// Delete a note
+// "Delete" a note by marking it as trashed
 export const deleteNote = (id: string): boolean => {
   const notes = getNotes();
-  const filteredNotes = notes.filter(note => note.id !== id);
+  const index = notes.findIndex(note => note.id === id);
   
-  if (filteredNotes.length !== notes.length) {
-    localStorage.setItem('notes', JSON.stringify(filteredNotes));
+  if (index !== -1) {
+    notes[index] = {
+      ...notes[index],
+      isTrashed: true,
+      updatedAt: new Date().toISOString() // Optional: update updatedAt when trashed
+    };
+    localStorage.setItem('notes', JSON.stringify(notes));
     return true;
   }
   

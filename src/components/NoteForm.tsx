@@ -17,6 +17,7 @@ export default function NoteForm({ note, categories, onSave, onDelete }: NoteFor
   const [category, setCategory] = useState(note?.category || categories[0]?.id || '');
   const [tagInput, setTagInput] = useState('');
   const [tags, setTags] = useState<string[]>(note?.tags || []);
+  const [isPublic, setIsPublic] = useState(note?.isPublic ?? false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +31,8 @@ export default function NoteForm({ note, categories, onSave, onDelete }: NoteFor
       title,
       content,
       category,
-      tags
+      tags,
+      isPublic
     });
     
     navigate('/');
@@ -138,6 +140,24 @@ export default function NoteForm({ note, categories, onSave, onDelete }: NoteFor
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[200px]"
                 placeholder="Write your note here..."
               />
+            </div>
+            
+            <div className="mb-6">
+              <label className="flex items-center cursor-pointer">
+                <div className="relative">
+                  <input 
+                    type="checkbox"
+                    className="sr-only"
+                    checked={isPublic}
+                    onChange={(e) => setIsPublic(e.target.checked)}
+                  />
+                  <div className="block bg-gray-600 w-14 h-8 rounded-full transition-colors duration-300" style={{ backgroundColor: isPublic ? '#22c55e' : '#4b5563' }}></div>
+                  <div className="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-300 ease-in-out" style={{ transform: isPublic ? 'translateX(24px)' : 'translateX(0)' }}></div>
+                </div>
+                <div className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                  {isPublic ? 'Public' : 'Private'}
+                </div>
+              </label>
             </div>
             
             <div>

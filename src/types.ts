@@ -6,6 +6,9 @@ export interface Note {
   tags: string[];
   createdAt: string;
   updatedAt: string;
+  isTrashed?: boolean;
+  isPublic?: boolean;
+  isFavorite?: boolean;
 }
 
 export interface Category {
