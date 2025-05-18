@@ -2,6 +2,7 @@ import { Menu, Moon, Plus, Search, Settings, Sun, LogIn, Filter } from 'lucide-r
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useNoteFilter } from '../context/NoteFilterContext';
+import { UserButton, useUser } from '@clerk/clerk-react';
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -11,6 +12,7 @@ export default function Header({ toggleSidebar }: HeaderProps) {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const { searchQuery, setSearchQuery, selectedCategory, setSelectedCategory, categories } = useNoteFilter();
+  const { user } = useUser();
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 py-3 px-4 flex items-center justify-between transition-colors duration-200">
@@ -80,6 +82,9 @@ export default function Header({ toggleSidebar }: HeaderProps) {
         >
           <Settings size={20} className="dark:text-gray-200" />
         </button>
+        <div className="ml-2">
+          <UserButton afterSignOutUrl="/sign-in" />
+        </div>
       </div>
     </header>
   );
